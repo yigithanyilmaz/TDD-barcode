@@ -32,6 +32,18 @@ public class SellOneItemTest {
 
     }
 
+    @Test
+    public void productNotFound() throws Exception {
+
+        final Display display = new Display();
+        final Sale sale = new Sale(display);
+
+        sale.onBarcode("9999");
+        assertEquals("PRODUCT NOT FOUND: 9999", display.getText());
+
+
+    }
+
     private class Display {
 
         private String text;
@@ -57,8 +69,10 @@ public class SellOneItemTest {
             if ("123".equals(barcode)) {
                 display.setText("7,45");
             }
-             else {
+             else if ("456".equals(barcode)) {
                 display.setText("45,78");
+            } else {
+                display.setText("PRODUCT NOT FOUND: " + barcode);
             }
 
 
