@@ -33,6 +33,16 @@ public class SellOneItemTest {
     }
 
     @Test
+    public void emptyBarcodeScan() throws Exception {
+        final Display display = new Display();
+        final Sale sale = new Sale(display);
+
+        sale.onBarcode("");
+        assertEquals("Scanning Error!", display.getText());
+
+    }
+
+    @Test
     public void productNotFound() throws Exception {
 
         final Display display = new Display();
@@ -40,7 +50,6 @@ public class SellOneItemTest {
 
         sale.onBarcode("9999");
         assertEquals("PRODUCT NOT FOUND: 9999", display.getText());
-
 
     }
 
@@ -68,6 +77,9 @@ public class SellOneItemTest {
 
             if ("123".equals(barcode)) {
                 display.setText("7,45");
+            } else if("".equals(barcode)){
+                display.setText("Scanning Error!");
+
             }
              else if ("456".equals(barcode)) {
                 display.setText("45,78");
