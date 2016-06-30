@@ -69,9 +69,14 @@ public class SellOneItemTest {
 
     private class Sale {
         private Display display;
+        private Map<String, String> pricesByBarcode;
 
         public Sale(Display display) {
             this.display = display;
+            this.pricesByBarcode = new HashMap<String, String>() {{
+                put("123", "7,45");
+                put("456", "45,78");
+            }};
         }
 
         public void onBarcode(String barcode) {
@@ -79,10 +84,6 @@ public class SellOneItemTest {
                 display.setText("Scanning Error!");
 
             } else {
-                final Map<String, String> pricesByBarcode = new HashMap<String, String>() {{
-                    put("123", "7,45");
-                    put("456", "45,78");
-                }};
 
                 if (pricesByBarcode.containsKey(barcode))
                     display.setText(pricesByBarcode.get(barcode));
