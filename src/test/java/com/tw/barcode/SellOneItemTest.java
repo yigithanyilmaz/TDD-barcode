@@ -1,13 +1,11 @@
 package com.tw.barcode;
 
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static javax.swing.UIManager.put;
 import static org.junit.Assert.*;
 
 
@@ -15,7 +13,10 @@ public class SellOneItemTest {
     @Test
     public void ItemFound() throws Exception {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, new HashMap<String, String>() {{
+            put("123", "7,45");
+            put("456", "45,78");
+        }});
 
         sale.onBarcode("123");
         assertEquals("7,45", display.getText());
@@ -26,7 +27,10 @@ public class SellOneItemTest {
     @Test
     public void secondItemFound() throws Exception {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, new HashMap<String, String>() {{
+            put("123", "7,45");
+            put("456", "45,78");
+        }});
 
         sale.onBarcode("456");
         assertEquals("45,78", display.getText());
@@ -36,7 +40,10 @@ public class SellOneItemTest {
     @Test
     public void emptyBarcodeScan() throws Exception {
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, new HashMap<String, String>() {{
+            put("123", "7,45");
+            put("456", "45,78");
+        }});
 
         sale.onBarcode("");
         assertEquals("Scanning Error!", display.getText());
@@ -47,7 +54,10 @@ public class SellOneItemTest {
     public void productNotFound() throws Exception {
 
         final Display display = new Display();
-        final Sale sale = new Sale(display);
+        final Sale sale = new Sale(display, new HashMap<String, String>() {{
+            put("123", "7,45");
+            put("456", "45,78");
+        }});
 
         sale.onBarcode("9999");
         assertEquals("PRODUCT NOT FOUND: 9999", display.getText());
@@ -71,12 +81,9 @@ public class SellOneItemTest {
         private Display display;
         private Map<String, String> pricesByBarcode;
 
-        public Sale(Display display) {
+        public Sale(Display display, Map<String, String> map) {
             this.display = display;
-            this.pricesByBarcode = new HashMap<String, String>() {{
-                put("123", "7,45");
-                put("456", "45,78");
-            }};
+            this.pricesByBarcode = map;
         }
 
         public void onBarcode(String barcode) {
