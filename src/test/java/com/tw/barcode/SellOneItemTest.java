@@ -3,6 +3,7 @@ package com.tw.barcode;
 
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,10 +41,7 @@ public class SellOneItemTest {
     @Test
     public void emptyBarcodeScan() throws Exception {
         final Display display = new Display();
-        final Sale sale = new Sale(display, new HashMap<String, String>() {{
-            put("123", "7,45");
-            put("456", "45,78");
-        }});
+        final Sale sale = new Sale(display, Collections.<String, String> emptyMap());
 
         sale.onBarcode("");
         assertEquals("Scanning Error!", display.getText());
@@ -72,7 +70,7 @@ public class SellOneItemTest {
             this.text = text;
         }
 
-        public String getText(){
+        public String getText() {
             return text;
         }
     }
@@ -89,16 +87,16 @@ public class SellOneItemTest {
         public void onBarcode(String barcode) {
             if ("".equals(barcode)) {
                 display.setText("Scanning Error!");
-
-            } else {
-
-                if (pricesByBarcode.containsKey(barcode))
-                    display.setText(pricesByBarcode.get(barcode));
-                else
-                    display.setText("PRODUCT NOT FOUND: " + barcode);
-
+                return;
 
             }
 
+            if (pricesByBarcode.containsKey(barcode)) {
+                display.setText(pricesByBarcode.get(barcode));
+            } else{
+                display.setText("PRODUCT NOT FOUND: " + barcode);}
+
+
         }
-    }}
+    }
+}
