@@ -84,9 +84,7 @@ public class SellOneItemTest {
                     put("456", "45,78");
                 }};
 
-                if ("123".equals(barcode))
-                    display.setText(pricesByBarcode.get(barcode));
-                else if ("456".equals(barcode))
+                if (pricesByBarcode.containsKey(barcode))
                     display.setText(pricesByBarcode.get(barcode));
                 else
                     display.setText("PRODUCT NOT FOUND: " + barcode);
