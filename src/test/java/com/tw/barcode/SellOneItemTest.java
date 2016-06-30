@@ -3,12 +3,13 @@ package com.tw.barcode;
 
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static javax.swing.UIManager.put;
 import static org.junit.Assert.*;
 
-
-
-import java.awt.*;
-import java.rmi.UnexpectedException;
 
 public class SellOneItemTest {
     @Test
@@ -73,22 +74,25 @@ public class SellOneItemTest {
             this.display = display;
         }
 
-        public void onBarcode(String barcode) throws UnexpectedException {
-
-            if ("123".equals(barcode)) {
-                display.setText("7,45");
-            } else if("".equals(barcode)){
+        public void onBarcode(String barcode) {
+            if ("".equals(barcode)) {
                 display.setText("Scanning Error!");
 
-            }
-             else if ("456".equals(barcode)) {
-                display.setText("45,78");
             } else {
-                display.setText("PRODUCT NOT FOUND: " + barcode);
-            }
+                final Map<String, String> pricesByBarcode = new HashMap<String, String>() {{
+                    put("123", "7,45");
+                    put("456", "45,78");
+                }};
 
+                if ("123".equals(barcode))
+                    display.setText(pricesByBarcode.get(barcode));
+                else if ("456".equals(barcode))
+                    display.setText(pricesByBarcode.get(barcode));
+                else
+                    display.setText("PRODUCT NOT FOUND: " + barcode);
+
+
+            }
 
         }
-
-    }
-}
+    }}
