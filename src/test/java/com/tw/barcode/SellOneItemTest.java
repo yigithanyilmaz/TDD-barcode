@@ -1,6 +1,7 @@
 package com.tw.barcode;
 
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -11,14 +12,21 @@ import static org.junit.Assert.*;
 
 
 public class SellOneItemTest {
-    @Test
-    public void ItemFound() throws Exception {
-        final Display display = new Display();
-        final Sale sale = new Sale(display, new HashMap<String, String>() {{
+
+    private Display display;
+    private Sale sale;
+
+    @Before
+    public void setUp() throws Exception {
+        display = new Display();
+        sale = new Sale(display, new HashMap<String, String>() {{
             put("123", "7,45");
             put("456", "45,78");
         }});
+    }
 
+    @Test
+    public void ItemFound() throws Exception {
         sale.onBarcode("123");
         assertEquals("7,45", display.getText());
 
@@ -27,12 +35,6 @@ public class SellOneItemTest {
 
     @Test
     public void secondItemFound() throws Exception {
-        final Display display = new Display();
-        final Sale sale = new Sale(display, new HashMap<String, String>() {{
-            put("123", "7,45");
-            put("456", "45,78");
-        }});
-
         sale.onBarcode("456");
         assertEquals("45,78", display.getText());
 
@@ -50,12 +52,6 @@ public class SellOneItemTest {
 
     @Test
     public void productNotFound() throws Exception {
-
-        final Display display = new Display();
-        final Sale sale = new Sale(display, new HashMap<String, String>() {{
-            put("123", "7,45");
-            put("456", "45,78");
-        }});
 
         sale.onBarcode("9999");
         assertEquals("PRODUCT NOT FOUND: 9999", display.getText());
@@ -86,17 +82,31 @@ public class SellOneItemTest {
 
         public void onBarcode(String barcode) {
             if ("".equals(barcode)) {
-                display.setText("Scanning Error!");
+                displayEmptyBarcodeMsg();
                 return;
 
             }
 
             if (pricesByBarcode.containsKey(barcode)) {
-                display.setText(pricesByBarcode.get(barcode));
+                displayPrice(barcode);
             } else{
-                display.setText("PRODUCT NOT FOUND: " + barcode);}
+
+                displayProductNotFoundMsg(barcode);
+            }
 
 
+        }
+
+        private void displayProductNotFoundMsg(String barcode) {
+            display.setText("PRODUCT NOT FOUND: " + barcode);
+        }
+
+        private void displayPrice(String barcode) {
+            display.setText(pricesByBarcode.get(barcode));
+        }
+
+        private void displayEmptyBarcodeMsg() {
+            display.setText("Scanning Error!");
         }
     }
 }
