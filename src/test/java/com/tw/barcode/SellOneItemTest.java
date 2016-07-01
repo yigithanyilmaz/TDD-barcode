@@ -69,6 +69,24 @@ public class SellOneItemTest {
         public String getText() {
             return text;
         }
+
+        public void displayEmptyBarcodeMsg() {
+            setText("Scanning Error!");
+        }
+
+        private void displayPrice(String priceAsText) {
+            setText(priceAsText);
+        }
+
+        public void displayProductNotFoundMsg(String barcode) {
+            setText("PRODUCT NOT FOUND: " + barcode);
+        }
+
+        public void getBarcodeThenDisplayPrice(String barcode, Sale sale) {
+
+            final String priceAsText = sale.findPrice(barcode);
+            displayPrice(priceAsText);
+        }
     }
 
     private class Sale {
@@ -80,43 +98,27 @@ public class SellOneItemTest {
             this.pricesByBarcode = map;
         }
 
+
         public void onBarcode(String barcode) {
             if ("".equals(barcode)) {
-                displayEmptyBarcodeMsg();
+                display.displayEmptyBarcodeMsg();
                 return;
 
             }
+            final String priceAsText = findPrice(barcode);
+            if (priceAsText==null) {
+                display.displayProductNotFoundMsg(barcode);
 
-            if (pricesByBarcode.containsKey(barcode)) {
-                getBarcodeThenDisplayPrice(barcode);
             } else{
+                display.getBarcodeThenDisplayPrice(barcode, this);
 
-                displayProductNotFoundMsg(barcode);
             }
 
 
-        }
-
-        private void displayProductNotFoundMsg(String barcode) {
-            display.setText("PRODUCT NOT FOUND: " + barcode);
-        }
-
-        private void getBarcodeThenDisplayPrice(String barcode) {
-
-            final String priceAsText = findPrice(barcode);
-            displayPrice(priceAsText);
-        }
-
-        private void displayPrice(String priceAsText) {
-            display.setText(priceAsText);
         }
 
         private String findPrice(String barcode) {
             return pricesByBarcode.get(barcode);
-        }
-
-        private void displayEmptyBarcodeMsg() {
-            display.setText("Scanning Error!");
         }
     }
 }
