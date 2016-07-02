@@ -19,10 +19,10 @@ public class SellOneItemTest {
     @Before
     public void setUp() throws Exception {
         display = new Display();
-        sale = new Sale(display, new HashMap<String, String>() {{
+        sale = new Sale(display, new Catalog(new HashMap<String, String>() {{
             put("123", "7,45");
             put("456", "45,78");
-        }});
+        }}));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SellOneItemTest {
     @Test
     public void emptyBarcodeScan() throws Exception {
         final Display display = new Display();
-        final Sale sale = new Sale(display, Collections.<String, String> emptyMap());
+        final Sale sale = new Sale(display, new Catalog(Collections.<String, String>emptyMap()));
 
         sale.onBarcode("");
         assertEquals("Scanning Error!", display.getText());
@@ -84,18 +84,18 @@ public class SellOneItemTest {
 
         public void getBarcodeThenDisplayPrice(String barcode, Sale sale) {
 
-            final String priceAsText = sale.findPrice(barcode);
+            final String priceAsText = sale.catalog.findPrice(barcode);
             displayPrice(priceAsText);
         }
     }
 
     private class Sale {
         private Display display;
-        private Map<String, String> pricesByBarcode;
+        private Catalog catalog;
 
-        public Sale(Display display, Map<String, String> map) {
+        public Sale(Display display, Catalog catalog) {
             this.display = display;
-            this.pricesByBarcode = map;
+            this.catalog = catalog;
         }
 
 
@@ -105,7 +105,7 @@ public class SellOneItemTest {
                 return;
 
             }
-            final String priceAsText = findPrice(barcode);
+            final String priceAsText = catalog.findPrice(barcode);
             if (priceAsText==null) {
                 display.displayProductNotFoundMsg(barcode);
 
@@ -117,7 +117,20 @@ public class SellOneItemTest {
 
         }
 
-        private String findPrice(String barcode) {
+    }
+
+    public  class Catalog {
+        private final Map<String, String> pricesByBarcode;
+
+        private Catalog(Map<String, String> pricesByBarcode) {
+            this.pricesByBarcode = pricesByBarcode;
+        }
+
+        public Map<String, String> getPricesByBarcode() {
+            return pricesByBarcode;
+        }
+
+        public String findPrice(String barcode) {
             return pricesByBarcode.get(barcode);
         }
     }
